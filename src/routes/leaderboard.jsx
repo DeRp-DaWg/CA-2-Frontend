@@ -13,11 +13,10 @@ export default function Leaderboard() {
   function createRows() {
     fetcher.getLeaderboard()
     .then(data => {
-      console.log(data)
       setRows(
         data.map((user) => {
           return (
-            <tr>
+            <tr key={user.username}>
               <td></td>
               <td>{user.username}</td>
               <td>{user.highscore}</td>

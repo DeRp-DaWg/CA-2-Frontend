@@ -25,11 +25,14 @@ function getJokes() {
 }
 
 function sendAnswer(token, isCorrect) {
-  const data = {
-    "x-access-token": token,
+  const body = {
     "isCorrect": isCorrect
   }
-  return fetchURL(baseURL+"info", dataFactory("PUT", data))
+  
+  const header = {
+    "x-access-token": token
+  }
+  return fetchURL(baseURL+"info", dataFactory("PUT", body, header))
 }
 
 function fetchURL(URL, data) {
@@ -39,14 +42,17 @@ function fetchURL(URL, data) {
     .then((data) => {return data})
 }
 
-function dataFactory(method, body) {
+function dataFactory(method, body, headers) {
+  if (headers == null) {
+    headers = {}
+  }
   const dataobj = {
     "method": method,
-    "headers": {
-      "Content-Type": "application/json"
-    },
+    "headers": headers,
     "body": JSON.stringify(body)
   }
+  dataobj["headers"]["Content-Type"] = "application/json"
+  //dataobj["headers"] = JSON.stringify(dataobj["headers"])
   return dataobj
 }
 

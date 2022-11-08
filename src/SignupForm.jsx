@@ -7,14 +7,20 @@ export default function SignupForm(props) {
   const passwordId = useId();
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [alert, setAlert] = useState({type: "primary", message: ""})
+  const [alert, setAlert] = useState({type: "", message: ""})
   function signup() {
     fetcher.createUser(username, password)
     .then(data => {
       if (data.code) {
-        setAlert({type: "danger", message: data.message})
+        switch(data.code) {
+          default:
+            setAlert({type: "danger", message: data.code+": "+data.message})
+            break
+        }
       } else if (data.username) {
         setAlert({type: "primary", message: "Account created."})
+      } else {
+        setAlert({type: "danger", message: "This error should not be possible"})
       }
       props.onSignup(data)
     })

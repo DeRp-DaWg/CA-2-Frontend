@@ -7,11 +7,15 @@ export default function root() {
   const [count, setCount] = useState(0)
   const [username, setUsername] = useState("")
   const [token, setToken] = useState("")
+  const [score, setScore] = useState(0)
+  const [highscore, setHighscore] = useState(0)
   
   function handleLogin(user) {
     if (!user.code) {
       setToken(user.token)
       setUsername(user.username)
+      setScore(user.score)
+      setHighscore(user.highscore)
     }
     console.log(user)
   }
@@ -24,12 +28,11 @@ export default function root() {
     setToken("")
     setUsername("")
   }
-  // Outlet doesn't update when the token changes.
   return (
     <div className="App">
       <Container>
         <CustomNavbar onLogin={handleLogin} onSignup={handleSignup} onLogout={handleLogout} username={username}/>
-        <Outlet context={[token]}/>
+        <Outlet context={{token, score, setScore, highscore, setHighscore}}/>
       </Container>
     </div>
   )
