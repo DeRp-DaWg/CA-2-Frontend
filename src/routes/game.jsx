@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Container, Stack } from 'react-bootstrap'
+import { Alert, Button, Col, Container, Row, Stack } from 'react-bootstrap'
 import { useOutletContext } from 'react-router-dom'
 import fetcher from '../fetcher'
 
@@ -8,28 +8,34 @@ export default function game() {
   const [jokeName, setJokeName] = useState("")
   const [jokes, setJokes] = useState([])
   const [alert, setAlert] = useState({type: "", message: ""})
+  const [noLoginScore, setNoLoginScore] = useState(0)
+  const [noLoginHighscore, setNoLoginHighscore] = useState(0)
   const props = useOutletContext()
   
   useEffect(() => {
     getNewJokes()
-  },[])
+  }, [])
+  
+  useEffect(() => {
+    if (noLoginScore > noLoginHighscore) setNoLoginHighscore(noLoginScore)
+  }, [noLoginScore])
   
   useEffect(() => {
     renderJokes()
-  },[jokes, props.token])
+  }, [jokes, props.token])
   
   function answer(answer) {
     let isCorrect;
     if (jokeName === answer) {
       isCorrect = true
-      // props.setScore(props.score+1)
+      setNoLoginScore(noLoginScore+1)
+      
     } else {
       isCorrect = false
-      // props.setScore(0)
+      setNoLoginScore(0)
     }
     fetcher.sendAnswer(props.token, isCorrect)
     .then(data => {
-      console.log(data)
       if (data.code) {
         switch(data.code) {
           case 403:
@@ -85,11 +91,15 @@ export default function game() {
   return (
     <Container>
       {alert.message === "" ? <></> : <Alert variant={alert.type}>{alert.message}</Alert>}
-      <Stack direction="horizontal" gap={4}>
-        <h1>Find the {jokeName} joke</h1>
-        <h1>Score: {props.score}</h1>
-        <h1>Highscore: {props.highscore}</h1>
-      </Stack>
+      <Row className="justify-content-end">
+        <Col>
+          <h1>Find the {jokeName} joke</h1>
+        </Col>
+        <Col md="auto">
+          <h2>Score: {props.token === "" ? noLoginScore : props.score}</h2>
+          <h2>Highscore: {props.token === "" ? noLoginHighscore : props.highscore}</h2>
+        </Col>
+      </Row>
       <Stack direction="vertical" gap={3}>
         {rows}
       </Stack>

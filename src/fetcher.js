@@ -1,7 +1,7 @@
 const baseURL = "https://larspeterjoergensen.com/CA-2/api/"
 
-function getLeaderboard() {
-  return fetchURL(baseURL+"info/highscores/")
+function getLeaderboard(start, max) {
+  return fetchURL(baseURL+"info/highscores?start="+start+"&max="+max)
 }
 
 function login(username, password) {
@@ -43,16 +43,21 @@ function fetchURL(URL, data) {
 }
 
 function dataFactory(method, body, headers) {
-  if (headers == null) {
-    headers = {}
-  }
+  // if (headers == null) {
+  //   headers = {}
+  // }
   const dataobj = {
     "method": method,
-    "headers": headers,
-    "body": JSON.stringify(body)
+  }
+  if (headers) {
+    dataobj.headers = headers
+  } else {
+    dataobj.headers = {}
+  }
+  if (body) {
+    dataobj.body = JSON.stringify(body)
   }
   dataobj["headers"]["Content-Type"] = "application/json"
-  //dataobj["headers"] = JSON.stringify(dataobj["headers"])
   return dataobj
 }
 
